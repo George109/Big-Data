@@ -2,11 +2,7 @@ clear all
 clc
 delete(gcp('nocreate')) %delete/close any pools currently running. Close them at the start of the program as it makes debugging really difficult as closing it and the end of the program deletes the variables which makes debugging really hard to do.
 
-%searchFor = input("Please enter the string you wish to find: ", 's');
-%threads = input("Please enter the number of files you wish to search though: ");
-
-searchFor = 'eeypr';
-threads = 4;
+%-------------------------------end of setup-------------------------------
 %-----------------
 %Allow MATLAB to use any number of cores by setting the max to 32. I tried
 %using 256 and crashed the computer as I ran out of page file and memory!
@@ -18,9 +14,39 @@ saveProfile(myCluster);
 parpool(threads);
 feature('numcores');
 
+%----------------------end of config------------------------
+
+%searchFor = input("Please enter the string you wish to find: ", 's');
+%threads = input("Please enter the number of files you wish to search though: ");
+
+searchFor = 'eeypr';
+threads = 4;
+
+
+FileError = 1;
+while FileError == 1
+    try
+        for num = 1:threads
+            num
+            file = fileread(['input' num2str(num) '.txt']);
+            if file == -1
+                a = CatchError(1,2);
+            end
+            fclose('all');
+        end
+        FileError = 0;
+    catch 
+        fprintf("The file: %s \n cannot be found or opened! \nCheck you entered the correct number of files and that the file is not locked.\n", ['input' num2str(num) '.txt']);
+        %threads = input("Please enter the number of files you wish to search though: ");
+        threads = 4;
+        FileError = 1;
+    end
+end
+
+
 spmd(threads)
     id = labindex;
-    filetext = fileread(['input' char(string(i) '.txt']); % ID needs to be converted to a string first and then a char otherwise the char value is represented in hex which produces the wrong ASCII value as it is converted to the hex value not the representation
+    filetext = fileread(['input' num2str(id) '.txt']);
     locations = strfind(filetext,searchFor);
     count = numel(locations);
 end
