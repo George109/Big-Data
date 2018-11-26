@@ -11,13 +11,17 @@ while FileError == 1
     try
         for num = 1:threads
             num
-            file = fopen(['input' num '.txt'], 'r');
+            file = fileread(['input' num2str(id) '.txt']);
+            if file == -1
+                a = CatchError(1,2);
+            end
             fclose('all');
         end
         FileError = 0;
-    catch
+    catch file = -1
         fprintf("Files do not exist! \nCheck you entered the correct number.\n");
         %threads = input("Please enter the number of files you wish to search though: ");
         FileError = 1;
     end
 end
+fclose('all');

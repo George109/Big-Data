@@ -20,7 +20,7 @@ feature('numcores');
 
 spmd(threads)
     id = labindex;
-    filetext = fileread(['input' char(string(id)) '.txt']); % ID needs to be converted to a string first and then a char otherwise the char value is represented in hex which produces the wrong ASCII value as it is converted to the hex value not the representation
+    filetext = fileread(['input' num2str(id) '.txt']);
     locations = strfind(filetext,searchFor);
     count = numel(locations);
 end
